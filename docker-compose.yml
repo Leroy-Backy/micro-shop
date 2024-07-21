@@ -1,0 +1,41 @@
+services:
+  postgres:
+    container_name: ms_pg_sql
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data #'postgres' is a volume that would be managed by docker and exists on path: /var/lib/docker/volumes/micro-shop_postgres
+    ports:
+      - 5432:5432
+    networks:
+      - micro-shop-net # network from 'networks' section
+    restart: unless-stopped
+  
+  mongodb:
+    container_name: ms_mongo_db
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data #'mongo' is a volume that would be managed by docker and exists on path: /var/lib/docker/volumes/micro-shop_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+  
+  mail-dev:
+    container_name: ms_mail_dev
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+networks:
+  micro-shop-net:
+    driver: bridge
+      
+volumes:
+  postgres:
+  mongo:

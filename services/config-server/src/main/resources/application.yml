@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/configurations #location of our configuration files (classpath means in resources/configurations directory)
+
+server:
+  port: 8888

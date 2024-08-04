@@ -7,10 +7,6 @@ spring:
       port: 27017
       database: customer
       authentication-database: admin
-
-eureka:
-  client:
-    service-url: { defaultZone: http://localhost:8761/eureka }
       
 server:
   port: 8090

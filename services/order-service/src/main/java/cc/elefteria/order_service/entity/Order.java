@@ -12,7 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,8 +32,8 @@ public class Order {
   @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
   private String customerId;
-  @OneToMany(mappedBy = "order")
-  private List<OrderLine> orderLines;
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  private Set<OrderLine> orderLines = new HashSet<>();
   @CreationTimestamp
   @Column(updatable = false, nullable = false)
   private Timestamp createdAt;

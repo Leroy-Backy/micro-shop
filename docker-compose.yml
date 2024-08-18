@@ -32,9 +32,9 @@ services:
       - 1080:1080
       - 1025:1025
   
-  zookeeper:
+  ms_zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    container_name: ms_zookeeper
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -50,12 +50,12 @@ services:
     ports:
       - 9092:9092
     depends_on:
-      - zookeeper
+      - ms_zookeeper
     environment:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 #how many clusters of the kafka
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 #how many clusters of the kafka
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 #how many clusters of the kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 #zookeeper address
+      KAFKA_ZOOKEEPER_CONNECT: ms_zookeeper:2181 #zookeeper address
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT #which protocol to use for each listener <name:value> format
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092 # address of the listeners <name:address> format
     networks:

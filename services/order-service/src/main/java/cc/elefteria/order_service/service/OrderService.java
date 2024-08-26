@@ -5,12 +5,17 @@ import cc.elefteria.order_service.client.ProductClient;
 import cc.elefteria.order_service.entity.Order;
 import cc.elefteria.order_service.entity.OrderLine;
 import cc.elefteria.order_service.exception.BusinessException;
+import cc.elefteria.order_service.kafka.OrderConfirmationEvent;
+import cc.elefteria.order_service.kafka.OrderProducer;
 import cc.elefteria.order_service.record.CustomerRecord;
 import cc.elefteria.order_service.record.OrderRecord;
 import cc.elefteria.order_service.record.PurchaseRequest;
+import cc.elefteria.order_service.record.PurchaseResponse;
 import cc.elefteria.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final CustomerClient customerClient;
   private final ProductClient productClient;
+  private final OrderProducer orderProducer;
 
   public Integer createOrder(OrderRecord order) {
     // check the customer -> customer-service (OpenFeign)
@@ -26,7 +32,7 @@ public class OrderService {
         .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exist with id: " + order.customerId()));
     
     // purchase products --> product-service (RestTemplate)
-    productClient.purchaseProducts(order.products());
+    List<PurchaseResponse> purchasedProducts = productClient.purchaseProducts(order.products());
     
     Order orderToPersist = order.toOrder();
     
@@ -46,10 +52,17 @@ public class OrderService {
     
     // todo start payment process
     
-    // todo send the order confirmation --> notification service (kafka)
+    orderProducer.sendOrderConfirmation(
+        new OrderConfirmationEvent(
+            orderToPersist.getReference(),
+            orderToPersist.getTotalAmount(),
+            orderToPersist.getPaymentMethod(),
+            customer,
+            purchasedProducts
+        )
+    );
     
-    
-    return null;
+    return orderToPersist.getId();
   }
   
 }

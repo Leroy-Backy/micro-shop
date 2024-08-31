@@ -32,7 +32,7 @@ public class Order {
   @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
   private String customerId;
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Set<OrderLine> orderLines = new HashSet<>();
   @CreationTimestamp
   @Column(updatable = false, nullable = false)

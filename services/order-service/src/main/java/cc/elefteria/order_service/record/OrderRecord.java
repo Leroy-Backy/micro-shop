@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public record OrderRecord(
@@ -31,5 +32,16 @@ public record OrderRecord(
             .totalAmount(this.totalAmount)
             .paymentMethod(this.paymentMethod)
             .build();
+    }
+    
+    public static OrderRecord fromOrder(Order order) {
+        return new OrderRecord(
+            order.getId(),
+            order.getReference(),
+            order.getTotalAmount(),
+            order.getPaymentMethod(),
+            order.getCustomerId(),
+            order.getOrderLines().stream().map(ol -> new PurchaseRequest(ol.getProductId(), ol.getQuantity())).toList()
+        );
     }
 }

@@ -12,6 +12,7 @@ import cc.elefteria.order_service.record.OrderRecord;
 import cc.elefteria.order_service.record.PurchaseRequest;
 import cc.elefteria.order_service.record.PurchaseResponse;
 import cc.elefteria.order_service.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +65,14 @@ public class OrderService {
     
     return orderToPersist.getId();
   }
-  
+
+  public List<OrderRecord> findAll() {
+    return orderRepository.findAll().stream().map(OrderRecord::fromOrder).toList();
+  }
+
+  public OrderRecord findById(Integer id) {
+    return orderRepository.findById(id)
+        .map(OrderRecord::fromOrder)
+        .orElseThrow(() -> new EntityNotFoundException("Cannot find order with id: " + id));
+  }
 }

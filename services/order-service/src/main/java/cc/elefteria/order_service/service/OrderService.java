@@ -1,16 +1,14 @@
 package cc.elefteria.order_service.service;
 
 import cc.elefteria.order_service.client.CustomerClient;
+import cc.elefteria.order_service.client.PaymentClient;
 import cc.elefteria.order_service.client.ProductClient;
 import cc.elefteria.order_service.entity.Order;
 import cc.elefteria.order_service.entity.OrderLine;
 import cc.elefteria.order_service.exception.BusinessException;
 import cc.elefteria.order_service.kafka.OrderConfirmationEvent;
 import cc.elefteria.order_service.kafka.OrderProducer;
-import cc.elefteria.order_service.record.CustomerRecord;
-import cc.elefteria.order_service.record.OrderRecord;
-import cc.elefteria.order_service.record.PurchaseRequest;
-import cc.elefteria.order_service.record.PurchaseResponse;
+import cc.elefteria.order_service.record.*;
 import cc.elefteria.order_service.repository.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +24,7 @@ public class OrderService {
   private final CustomerClient customerClient;
   private final ProductClient productClient;
   private final OrderProducer orderProducer;
+  private final PaymentClient paymentClient;
 
   public Integer createOrder(OrderRecord order) {
     // check the customer -> customer-service (OpenFeign)
@@ -51,7 +50,14 @@ public class OrderService {
     // persist order
     orderRepository.save(orderToPersist);
     
-    // todo start payment process
+    paymentClient.requestOrderPayment(new PaymentRecord(
+        null,
+        orderToPersist.getTotalAmount(),
+        orderToPersist.getPaymentMethod(),
+        orderToPersist.getId(),
+        orderToPersist.getReference(),
+        customer
+    ));
     
     orderProducer.sendOrderConfirmation(
         new OrderConfirmationEvent(

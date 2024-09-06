@@ -13,6 +13,6 @@ public class NotificationProducer {
   
   public void sendPaymentNotification(PaymentNotificationEvent notificationEvent) {
     log.info("Sending payment notification: <{}>", notificationEvent);
-    kafkaTemplate.send("payment-notification", notificationEvent);
+    kafkaTemplate.send("payment-topic", notificationEvent);
   }
 }

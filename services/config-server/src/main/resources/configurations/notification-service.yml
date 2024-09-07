@@ -9,11 +9,11 @@ spring:
       authentication-database: admin
   kafka:
     consumer:
-      bootstrap-servers: 9092
+      bootstrap-servers: http://localhost:9092
       group-id: paymentGroup,orderGroup
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.spring.framework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: 'cc.elefteria.*'
         spring.json.type.mapping: OrderConfirmationEvent:cc.elefteria.notification_service.kafka.order.OrderConfirmationEvent,PaymentNotificationEvent:cc.elefteria.notification_service.kafka.payment.PaymentNotificationEvent

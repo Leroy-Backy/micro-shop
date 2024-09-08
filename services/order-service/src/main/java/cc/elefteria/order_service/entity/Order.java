@@ -2,10 +2,7 @@ package cc.elefteria.order_service.entity;
 
 import cc.elefteria.order_service.enums.PaymentMethod;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,6 +30,7 @@ public class Order {
   private PaymentMethod paymentMethod;
   private String customerId;
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @Builder.Default
   private Set<OrderLine> orderLines = new HashSet<>();
   @CreationTimestamp
   @Column(updatable = false, nullable = false)

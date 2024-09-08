@@ -38,7 +38,6 @@ public class OrderService {
     
     // add order lines
     for (PurchaseRequest purchaseRequest: order.products()) {
-      //todo check saving
       OrderLine orderLine = OrderLine.builder()
           .order(orderToPersist)
           .productId(purchaseRequest.productId())
